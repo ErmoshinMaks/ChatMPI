@@ -14,17 +14,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt5 COMPONENTS
         Core
-        Gui
-        Widgets
         Sql
         REQUIRED)
 
 
 add_executable(ChatMPI
     main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    mainwindow.ui
   )
 
 
@@ -36,13 +31,8 @@ include_directories(${Qt5_INCLUDE_DIR})
 
 target_link_libraries(ChatMPI
         Qt5::Core
-        Qt5::Gui
-        Qt5::Widgets
         Qt5::Sql
         Engine
         Database
         )
 
-
-
-#target_link_libraries(ChatMPI PRIVATE Qt5::Widgets)
