@@ -1,5 +1,38 @@
 #include "engine.h"
 #include <QDebug>
+#define MESSAGE_SIZE 256
+void handleClient(int newsockfd)
+{
+    char line[MESSAGE_SIZE];
+    int n;
+
+    while(true)
+    {
+        bzero(line,MESSAGE_SIZE);
+        n = read(newsockfd, line, MESSAGE_SIZE);
+        if(n <= 0)
+            break;
+
+        qDebug() << line;
+
+        ClientDTO data;
+        data.from = 1;
+        data.to = 0;
+        memcpy(data.message, line, sizeof(line));
+
+        char buffer[sizeof(ClientDTO)];
+        memcpy(buffer, &data, sizeof(ClientDTO));
+        qDebug() <<"Message: " << buffer;
+
+        if( (write(newsockfd,buffer, sizeof(buffer))) < 0){
+                  printf("Can\'t write, errno = %d\n", errno);
+                  close(newsockfd);
+               }
+
+    }
+
+}
+
 
 
 void Server::createSocket()
@@ -33,24 +66,45 @@ bool Server::listenMessage()
     return true;
 }
 
-char* Server::getMessage()
+int Server::getMessage()
 {
     struct sockaddr_in cliaddr;
-    int n;
-    char line[1000];
     socklen_t clilen = sizeof(cliaddr);
+    while(true)
+    {
+        if( (newsockfd = accept(sockfd, (struct sockaddr *) &cliaddr, &clilen)) < 0){
+            printf("Can\'t accept connection, errno = %d\n", errno);
+            close(sockfd);
+        }
 
-    if( (newsockfd = accept(sockfd, (struct sockaddr *) &cliaddr, &clilen)) < 0){
-       printf("Can\'t accept connection, errno = %d\n", errno);
-       close(sockfd);
+        qDebug() << "Connection with: " << inet_ntoa(cliaddr.sin_addr);
+
+
+        std::thread(handleClient, newsockfd).detach();
     }
 
-    qDebug() << "Connection with: " << inet_ntoa(cliaddr.sin_addr);
-
-    bzero(line,1000);
-    while( (n = read(newsockfd, line, 1000)) > 0){
-        qDebug() << line;
-    }
-
-    return line;
+    return newsockfd;
 }
+
+void Server::joinThreads()
+{
+    for(int i = 0; i < clientThreads.size();i++)
+            clientThreads[i].join();
+
+}
+
+void Server::start()
+{
+    int newsockfd;
+    createSocket();
+    listenMessage();
+
+
+    newsockfd = getMessage();
+
+
+    joinThreads();
+
+}
+
+

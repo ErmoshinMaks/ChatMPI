@@ -5,13 +5,7 @@
 int main(int argc, char *argv[])
 {
     Server server = Server();
-    server.createSocket();
-    server.listenMessage();
-
-    while(1)
-    {
-        server.getMessage();
-    }
+    server.start();
 
 
     return 0;
