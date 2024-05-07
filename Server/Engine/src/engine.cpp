@@ -4,11 +4,8 @@
 void handleClient(int newsockfd,Server* server)
 {
     int n;
-    int count = 0;
     while(true)
     {
-        qDebug() << count;
-        count++;
         ClientDTO data;
         char buffer[sizeof(ClientDTO)];
 
@@ -17,23 +14,24 @@ void handleClient(int newsockfd,Server* server)
             break;
 
         memcpy(&data, buffer, sizeof(ClientDTO));
-        qDebug() <<"Принял сообщение: " << data.message ;
+        qDebug() <<"Принял сообщение: " << data.message << " от: " <<inet_ntoa(data.from);
 
-//        int toFd = newsockfd;
-//        in_addr toIp;
-//        for(int i = 0; i < server->sockets.size();i++)
-//        {
-//            if(server->sockets[i].first.s_addr == data.to.s_addr)
-//            {
-//                toFd = server->sockets[i].second;
-//                toIp = server->sockets[i].first;
-//                break;
-//            }
-//        }
-//        if( (write(toFd,buffer, sizeof(buffer))) < 0){
-//                  printf("Can\'t write, errno = %d\n", errno);
-//                  close(newsockfd);
-//               }
+        int toFd = newsockfd;
+        in_addr toIp;
+        //TODO:
+        for(int i = 0; i < server->sockets.size();i++)
+        {
+            if(server->sockets[i].first.s_addr == data.to.s_addr)
+            {
+                toFd = server->sockets[i].second;
+                toIp = server->sockets[i].first;
+                break;
+            }
+        }
+        if( (write(toFd,buffer, sizeof(buffer))) < 0){
+                  printf("Can\'t write, errno = %d\n", errno);
+                  close(newsockfd);
+               }
 
     }
 
