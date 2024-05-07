@@ -10,7 +10,6 @@
 #include <errno.h>
 #include <unistd.h>
 #include <thread>
-#include <vector>
 #include "ClientDTO.h"
 
 
@@ -20,17 +19,18 @@
 class Server
 {
 public:
-    int port = 52002;
-    int sockfd;
-    int newsockfd;
+    int sockfd;//no
+    int newsockfd;//no
+    int test_fd;//no
     struct sockaddr_in servaddr;
     std::vector<std::thread> clientThreads;
+    std::vector<QPair<in_addr,int>> sockets;
     void createSocket();
     bool listenMessage();
     int getMessage();
     void joinThreads();
     void start();
-//private:
-//    void handleClient(int newsockfd,int treadInd);
+private:
+    const int port = 52002;
 };
 #endif

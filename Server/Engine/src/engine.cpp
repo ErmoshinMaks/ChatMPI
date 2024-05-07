@@ -1,30 +1,35 @@
 #include "engine.h"
 #include <QDebug>
 #define MESSAGE_SIZE 256
-void handleClient(int newsockfd)
+void handleClient(int newsockfd,Server* server)
 {
-    char line[MESSAGE_SIZE];
     int n;
 
     while(true)
     {
-        bzero(line,MESSAGE_SIZE);
-        n = read(newsockfd, line, MESSAGE_SIZE);
+        ClientDTO data;
+        char buffer[sizeof(ClientDTO)];
+
+        n = read(newsockfd, buffer, MESSAGE_SIZE);
         if(n <= 0)
             break;
 
-        qDebug() << line;
+        memcpy(&data, buffer, sizeof(data));
+        qDebug() <<"Принял сообщение: " << data.message ;
 
-        ClientDTO data;
-        data.from = 1;
-        data.to = 0;
-        memcpy(data.message, line, sizeof(line));
-
-        char buffer[sizeof(ClientDTO)];
-        memcpy(buffer, &data, sizeof(ClientDTO));
-        qDebug() <<"Message: " << buffer;
-
-        if( (write(newsockfd,buffer, sizeof(buffer))) < 0){
+        int toFd = newsockfd;
+        in_addr toIp;
+        for(int i = 0; i < server->sockets.size();i++)
+        {
+            if(server->sockets[i].first.s_addr == data.to.s_addr)
+            {
+                toFd = server->sockets[i].second;
+                toIp = server->sockets[i].first;
+                break;
+            }
+        }
+        //qDebug() <<"Отправил сообщение: "<< toIp;
+        if( (write(toFd,buffer, sizeof(buffer))) < 0){
                   printf("Can\'t write, errno = %d\n", errno);
                   close(newsockfd);
                }
@@ -79,8 +84,9 @@ int Server::getMessage()
 
         qDebug() << "Connection with: " << inet_ntoa(cliaddr.sin_addr);
 
+        sockets.push_back(qMakePair(cliaddr.sin_addr,newsockfd));
 
-        std::thread(handleClient, newsockfd).detach();
+        std::thread(handleClient, newsockfd,this).detach();
     }
 
     return newsockfd;
