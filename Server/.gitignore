@@ -71,3 +71,8 @@ Thumbs.db
 *.dll
 *.exe
 
+build-Server-Desktop-Debug
+build-Client-Desktop-Debug
+CMakeLists.txt.user
+.vscode
+main

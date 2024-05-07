@@ -73,3 +73,5 @@ Thumbs.db
 build-Server-Desktop-Debug
 build-Client-Desktop-Debug
 CMakeLists.txt.user
+.vscode
+main
