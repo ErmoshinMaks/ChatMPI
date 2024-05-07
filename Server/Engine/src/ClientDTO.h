@@ -5,8 +5,8 @@
 
 struct ClientDTO
 {
-   in_addr from;
-   in_addr to;
+   char from[256];
+   char to[256];
    char message[256];
 };
 

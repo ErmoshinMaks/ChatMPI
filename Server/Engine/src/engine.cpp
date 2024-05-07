@@ -14,14 +14,21 @@ void handleClient(int newsockfd,Server* server)
             break;
 
         memcpy(&data, buffer, sizeof(ClientDTO));
-        qDebug() <<"Принял сообщение: " << data.message << " от: " <<inet_ntoa(data.from);
+        qDebug() <<"Принял сообщение: " << data.message << " от: " <<data.from;
+
 
         int toFd = newsockfd;
         in_addr toIp;
-        //TODO:
+
+        server->db.connection();
+        Client client = server->db.selectByFIO(data.to);
+        server->db.closing();
+
+        inet_pton(AF_INET, client.ip.toStdString().c_str(), &toIp);
+
         for(int i = 0; i < server->sockets.size();i++)
         {
-            if(server->sockets[i].first.s_addr == data.to.s_addr)
+            if(server->sockets[i].first.s_addr == toIp.s_addr)
             {
                 toFd = server->sockets[i].second;
                 toIp = server->sockets[i].first;
@@ -104,12 +111,18 @@ void Server::start()
     createSocket();
     listenMessage();
 
-
     newsockfd = getMessage();
-
 
     joinThreads();
 
 }
+
+void Server::reg(QString FIO,QString ip)
+{
+    db.connection();
+    db.insert(FIO,ip);
+    db.closing();
+}
+
 
 
