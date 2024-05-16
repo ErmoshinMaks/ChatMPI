@@ -1,9 +1,9 @@
 #include <QtCore>
+#include "mainwindow.h"
 #include <QApplication>
-#include <QInputDialog>
 
 #include "threadsqueue.hpp"
-#include "mainwindow.h"
+#include <QInputDialog>
 
 #include <iostream>
 #include <thread>
@@ -19,13 +19,11 @@
 
 const int PORT = 52002;
 const char* SERVER_IP = "127.0.0.1";
-char FIO_from[MESSAGE_SIZE] = "A";
-char FIO_to[MESSAGE_SIZE] = "C";
-
+char FIO_from[MESSAGE_SIZE] = "Максим Ермошин";
+char FIO_to[MESSAGE_SIZE] = "Бортник Степан";
 
 
 void receiveMessages(int sockfd, ThreadSafeQueue<ClientDTO>* queue) {
-    
     char sendline[MESSAGE_SIZE];
 
     while(true) {
@@ -84,15 +82,11 @@ int drawMessages(int argc, char *argv[], ThreadSafeQueue<ClientDTO>* q_send, Thr
             qDebug() << "Введенный логин: " << text;
             memcpy(msg.from, text.toStdString().c_str(), sizeof(text.toStdString().c_str()));
             memcpy(msg.message, REGISTR_MES, sizeof(REGISTR_MES));
-            msg.type = mes_t::REGS;
-            q_send->push(msg);
-            msg.type = mes_t::GETU;
             q_send->push(msg);
         }
     }
 
     MainWindow w;
-    // w.connect_waiter(&bell);
     w.get_queues(q_send, q_rcv);
     w.login(msg.from);
     w.show();
@@ -124,14 +118,14 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    std::thread receiver(receiveMessages, sockfd, &queue_rcv);
+    // std::thread receiver(receiveMessages, sockfd, &queue_rcv);
     std::thread sender(sendMessages, sockfd,servaddr,servaddr_to, &queue_send);
     std::thread gui(drawMessages, argc, argv, &queue_send, &queue_rcv);
 
-    receiver.join();
+    // receiver.join();
     sender.join();
     gui.join();
 
-    // close(sockfd);
+    close(sockfd);
     return 0;
 }

@@ -1,12 +1,16 @@
 #include "engine.h"
 #include <QDebug>
-#define MESSAGE_SIZE 256
-void handleClient(int newsockfd,Server* server)
+
+#define REGISTR_MES "registration"
+
+
+void handleClient(int newsockfd, Server* server, in_addr cli_ip)
 {
     int n;
     while(true)
     {
         ClientDTO data;
+        // in_addr sender = 
         char buffer[sizeof(ClientDTO)];
 
         n = read(newsockfd, buffer, sizeof(ClientDTO));
@@ -14,7 +18,28 @@ void handleClient(int newsockfd,Server* server)
             break;
 
         memcpy(&data, buffer, sizeof(ClientDTO));
-        qDebug() <<"Принял сообщение: " << data.message << " от: " <<data.from;
+        qDebug() <<"Принял сообщение: " << data.message << " от: " << data.from;
+
+        
+        if (data.type == mes_t::REGS){
+            server->reg(QString(data.from), inet_ntoa(cli_ip));
+            continue;
+        }
+        else if(data.type == mes_t::GETU){
+            server->db.connection();
+            QVector<Client> r = server->db.selectAll();
+            server->db.closing();
+            QString res;
+            for(int i = 0; i < r.size(); ++i)
+                res+= r[i].FIO+ ";";
+            memcpy(data.message, res.toStdString().c_str(), MESSAGE_SIZE);
+            memcpy(buffer, &data, sizeof(data));
+            if(write(newsockfd, buffer, sizeof(buffer)) < 0){
+                printf("---->Can\'t write, errno = %d\n", errno);
+                close(newsockfd);
+            }            
+            continue;
+        }
 
 
         int toFd = newsockfd;
@@ -35,11 +60,10 @@ void handleClient(int newsockfd,Server* server)
                 break;
             }
         }
-        if( (write(toFd,buffer, sizeof(buffer))) < 0){
-                  printf("Can\'t write, errno = %d\n", errno);
-                  close(newsockfd);
-               }
-
+        if( (write(toFd, buffer, sizeof(buffer))) < 0){
+            printf("Can\'t write, errno = %d\n", errno);
+            close(newsockfd);
+        }
     }
 
 }
@@ -48,8 +72,9 @@ void handleClient(int newsockfd,Server* server)
 
 void Server::createSocket()
 {
-    if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0){
-         printf("Can\'t create socket, errno = %d\n", errno);
+    if((sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0){
+    // if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0){
+        printf("Can\'t create socket, errno = %d\n", errno);
       }
 }
 
@@ -92,7 +117,7 @@ int Server::getMessage()
 
         sockets.push_back(qMakePair(cliaddr.sin_addr,newsockfd));
 
-        std::thread(handleClient, newsockfd,this).detach();
+        std::thread(handleClient, newsockfd,this, cliaddr.sin_addr).detach();
     }
 
     return newsockfd;

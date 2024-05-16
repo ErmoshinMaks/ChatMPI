@@ -1,14 +1,14 @@
 #ifndef CLIENTDTO_H
 #define CLIENTDTO_H
 
-#include <arpa/inet.h>
-
 #define MESSAGE_SIZE 256
+#define REGISTR_MES "registration"
 
 enum class mes_t {
    POST = 0, 
    REGS = 1,
-   GETU = 2 };
+   GETU = 2 
+};
 
 struct ClientDTO
 {

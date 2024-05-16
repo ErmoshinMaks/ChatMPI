@@ -20,13 +20,9 @@ public:
     void insert(QString FIO,QString ip);
     QVector<Client> selectAll();
 
-
-
 private:
     QSqlDatabase db;
     ClientTable clientTable;
-
-
 
 };
 

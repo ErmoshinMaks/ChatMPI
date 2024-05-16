@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(ChatMPI LANGUAGES CXX)
+set(PROJECT_NAME Server)
+project(${PROJECT_NAME} LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -19,7 +20,7 @@ find_package(Qt5 COMPONENTS
         REQUIRED)
 
 
-add_executable(ChatMPI
+add_executable(${PROJECT_NAME}
     main.cpp
   )
 
@@ -30,10 +31,11 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Database)
 
 include_directories(${Qt5_INCLUDE_DIR})
 
-target_link_libraries(ChatMPI
+target_link_libraries(${PROJECT_NAME}
         Qt5::Core
         Qt5::Sql
         Engine
         Database
+        pthread
         )
 

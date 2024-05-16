@@ -11,7 +11,7 @@
 #include <unistd.h>
 #include <thread>
 #include "ClientDTO.h"
-#include "../../database/src/databasecontroller.h"
+#include "../../Database/src/databasecontroller.h"
 
 
 #pragma once

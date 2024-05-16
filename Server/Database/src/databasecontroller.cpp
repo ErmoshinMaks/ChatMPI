@@ -56,3 +56,9 @@ void DatabaseController::insert(QString FIO,QString ip)
     clientTable.insert( FIO, ip);
 }
 
+
+
+QVector<Client> DatabaseController::selectAll()
+{
+    return clientTable.selectAll();
+}
