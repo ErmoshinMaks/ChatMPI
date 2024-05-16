@@ -16,7 +16,7 @@ DatabaseController& DatabaseController::operator=(DatabaseController&& other) {
 int DatabaseController::connection()
 {
     db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("../CLIENTINFO");
+    db.setDatabaseName("CLIENTINFO");
 
     if (db.open())
     {

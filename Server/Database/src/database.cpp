@@ -48,6 +48,7 @@ void ClientTable::insert(QString FIO,QString ip)
             return;
     }
     QSqlQuery query;
+    srand(time(0));
     int id = rand() % (1000000 - 1 + 1) + 0;
     query.prepare("INSERT INTO Client (id, FIO,ip) VALUES (:id, :FIO,:ip)");
     query.bindValue(":id", id);
@@ -55,7 +56,12 @@ void ClientTable::insert(QString FIO,QString ip)
     query.bindValue(":ip", ip);
 
     if (!query.exec()) {
-        qInfo() << "Cant insert data";
+        qInfo() << "Can not insert data";
+    }
+    if (!query.isActive()) {
+        qInfo() << "Error executing query:" << query.lastError().text();
+    } else {
+        qInfo() << "Data inserted successfully";
     }
 }
 
