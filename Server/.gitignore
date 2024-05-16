@@ -76,3 +76,4 @@ build-Client-Desktop-Debug
 CMakeLists.txt.user
 .vscode
 main
+build
