@@ -16,18 +16,25 @@ const char* SERVER_IP = "127.0.0.1";
 char FIO_from[MESSAGE_SIZE] = "C";
 char FIO_to[MESSAGE_SIZE] = "A";
 
-enum class mes_t {
+enum class mes_t 
+{
    POST = 0, 
    REGS = 1,
    GETU = 2 
+};
+
+struct Mes
+{
+   char data[MESSAGE_SIZE];
+   int len;
+   mes_t type;
 };
 
 struct ClientDTO
 {
    char from[MESSAGE_SIZE];
    char to[MESSAGE_SIZE];
-   char message[MESSAGE_SIZE];
-   mes_t type;
+   Mes mes;
 };
 
 void receiveMessages(int sockfd) {

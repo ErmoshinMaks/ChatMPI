@@ -22,11 +22,12 @@ const char* SERVER_IP = "127.0.0.1";
 char FIO_from[MESSAGE_SIZE] = "A";
 char FIO_to[MESSAGE_SIZE] = "C";
 
-
+#include "cripto.h"
 
 void receiveMessages(int sockfd, ThreadSafeQueue<ClientDTO>* queue) {
     
     char sendline[MESSAGE_SIZE];
+    Encoder enc;
 
     while(true) {
         memset(sendline, 0, sizeof(sendline));
@@ -44,23 +45,25 @@ void receiveMessages(int sockfd, ThreadSafeQueue<ClientDTO>* queue) {
         }
         memcpy(&data, buffer, sizeof(data));
         queue->push(data);
-        std::cout << "Received: " << data.message << std::endl;
+        std::cout << "Received: " << data.mes.data << std::endl;
     }
 }
 
 void sendMessages(int sockfd,sockaddr_in servaddr,sockaddr_in servaddr_to, ThreadSafeQueue<ClientDTO>* queue) {
     ClientDTO data;
-
+    Encoder enc;
     while(true) {
-        // std::getline(std::cin, message);
-
         if (queue->empty())
             continue;
         if (queue->try_pop(data)){
+            // ENCRYPTION
+            std::string mes = data.mes.data;
+            uint8_t* secret_mes = enc.encrypt(mes);
+            memcpy(data.mes.data, secret_mes, enc.get_len());
+            data.mes.len = enc.get_len();
+            // memcpy(data.mes.len, enc.get_len(), sizeof(int));
 
-            // memcpy(data.from, FIO_from,MESSAGE_SIZE);
-            // memcpy(data.to,msg.name.c_str(),MESSAGE_SIZE);
-            // memcpy(data.message, msg.mes.c_str(), sizeof(msg.mes));
+            // SENDING
             char buffer[sizeof(data)];
             memcpy(buffer, &data, sizeof(data));
 
@@ -77,24 +80,24 @@ int drawMessages(int argc, char *argv[], ThreadSafeQueue<ClientDTO>* q_send, Thr
 {
     QApplication a(argc, argv);
     bool ok = 0;
-    ClientDTO msg;
+    ClientDTO data;
     while(!ok){
         QString text = QInputDialog::getText(nullptr, "Авторизация", "Введите имя:", QLineEdit::Normal, QString(), &ok,Qt::WindowFlags() ,Qt::ImhNone);
         if (ok && !text.isEmpty()){
             qDebug() << "Введенный логин: " << text;
-            memcpy(msg.from, text.toStdString().c_str(), sizeof(text.toStdString().c_str()));
-            memcpy(msg.message, REGISTR_MES, sizeof(REGISTR_MES));
-            msg.type = mes_t::REGS;
-            q_send->push(msg);
-            msg.type = mes_t::GETU;
-            q_send->push(msg);
+            memcpy(data.from, text.toStdString().c_str(), sizeof(text.toStdString().c_str()));
+            memcpy(data.mes.data, REGISTR_MES, sizeof(REGISTR_MES));
+            data.mes.type = mes_t::REGS;
+            q_send->push(data);
+            data.mes.type = mes_t::GETU;
+            q_send->push(data);
         }
     }
 
     MainWindow w;
     // w.connect_waiter(&bell);
     w.get_queues(q_send, q_rcv);
-    w.login(msg.from);
+    w.login(data.from);
     w.show();
  
     return a.exec();
@@ -131,7 +134,19 @@ int main(int argc, char *argv[])
     receiver.join();
     sender.join();
     gui.join();
+    
+    close(sockfd);
 
-    // close(sockfd);
+
+    
+    // ClientDTO data;
+    // memcpy(data.message, "1sfhjhjdcbhjdsbhj!!!!!!", MESSAGE_SIZE);
+    // std::string a = data.message;
+    
+    // uint8_t* k = enc.encrypt(a);
+    // memcpy(data.message, k, enc.get_len());
+
+    // uint8_t* g = (uint8_t*)(&data.message);   
+    // qDebug() << enc.decrypt(g, 40).c_str();
     return 0;
 }

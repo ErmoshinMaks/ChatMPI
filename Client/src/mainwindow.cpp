@@ -66,14 +66,14 @@ void MainWindow::check_mes()
     ClientDTO data;
     if (m_q_rcv->empty() || !m_q_rcv->try_pop(data))
         return;
-    switch(data.type){
+    switch(data.mes.type){
         case mes_t::POST:
             if(QString(data.from) != username)
-                add_mes(QString(data.message), QString(data.from), 0);
+                add_mes(QString(data.mes.data), QString(data.from), 0);
             // ui->mesLabel->setText(ui->mesLabel->text() + data.message + QString("/n"));
             break;
         case mes_t::GETU:
-            QString line(data.message);
+            QString line(data.mes.data);
             QStringList list = line.split(';').filter(QString(""));
             list.removeLast();
             list.filter(username);
@@ -96,13 +96,11 @@ void MainWindow::send_mes()
     add_mes(mes, username, 1);
 
     ClientDTO data;
-    data.type = mes_t::POST;
+    data.mes.type = mes_t::POST;
     memcpy(data.to, to.toStdString().c_str(), MESSAGE_SIZE);
     memcpy(data.from, username.toStdString().c_str(), MESSAGE_SIZE);
-    memcpy(data.message, mes.toStdString().c_str(), MESSAGE_SIZE);
+    memcpy(data.mes.data, mes.toStdString().c_str(), MESSAGE_SIZE);
     m_q_send->push(data);
-    // qDebug() << ui->comboBoxClients->currentText();
-    // qDebug() << ui->input->toPlainText();
 }
 
 void MainWindow::add_mes(QString mes, QString name, bool t = false)
