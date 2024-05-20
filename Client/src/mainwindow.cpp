@@ -110,11 +110,11 @@ void MainWindow::add_mes(QString mes, QString name, bool t = false)
     // label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
     // QString text;
     if(!t){
-        label->setAlignment(Qt::AlignRight | Qt::AlignCenter);
+        label->setAlignment(Qt::AlignRight);
         // text = name + ": " + mes;
     }
     else{
-        label->setAlignment(Qt::AlignLeft | Qt::AlignCenter);
+        label->setAlignment(Qt::AlignLeft);
         // text = "Me:" + mes; 
     }
     ui->mes_layout->addWidget(label);
