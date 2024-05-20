@@ -19,9 +19,10 @@
 #include <stdlib.h>
 
 const int PORT = 52002;
-const char* SERVER_IP = "192.168.177.117";
-char FIO_from[MESSAGE_SIZE] = "A";
-char FIO_to[MESSAGE_SIZE] = "C";
+// const char* SERVER_IP = "192.168.177.117";
+const char* SERVER_IP = "127.0.0.1";
+// char FIO_from[MESSAGE_SIZE] = "A";
+// char FIO_to[MESSAGE_SIZE] = "C";
 
 
 
@@ -65,11 +66,12 @@ void sendMessages(int sockfd,sockaddr_in servaddr,sockaddr_in servaddr_to, Threa
             continue;
         if (queue->try_pop(data)){
             // ENCRYPTION
+            // if(data.mes.type == mes_t::POST){
             std::string mes = data.mes.data;
             uint8_t* secret_mes = enc.encrypt(mes);
             memcpy(data.mes.data, secret_mes, enc.get_len());
             data.mes.len = enc.get_len();
-            // memcpy(data.mes.len, enc.get_len(), sizeof(int));
+            
 
             // SENDING
             char buffer[sizeof(data)];
