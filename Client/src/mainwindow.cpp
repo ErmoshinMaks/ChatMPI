@@ -108,15 +108,15 @@ void MainWindow::add_mes(QString mes, QString name, bool t = false)
     QLabel* label = new QLabel;
     // QPushButton *button5 = new QPushButton(mes);
     // label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-    QString text;
+    // QString text;
     if(!t){
-        label->setAlignment(Qt::AlignRight);
-        text = name + ": " + mes;
+        label->setAlignment(Qt::AlignRight | Qt::AlignCenter);
+        // text = name + ": " + mes;
     }
     else{
-        label->setAlignment(Qt::AlignLeft);
-        text = "Me:" + mes; 
+        label->setAlignment(Qt::AlignLeft | Qt::AlignCenter);
+        // text = "Me:" + mes; 
     }
     ui->mes_layout->addWidget(label);
-    label->setText(text);
+    label->setText(mes);
 }
