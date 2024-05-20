@@ -18,21 +18,21 @@ void handleClient(int newsockfd, Server* server, in_addr cli_ip)
             break;
 
         memcpy(&data, buffer, sizeof(ClientDTO));
-        qDebug() <<"Принял сообщение: " << data.message << " от: " << data.from;
+        qDebug() <<"Принял сообщение: " << data.mes.data << " от: " << data.from;
 
         
-        if (data.type == mes_t::REGS){
+        if (data.mes.type == mes_t::REGS){
             server->reg(QString(data.from), inet_ntoa(cli_ip));
             continue;
         }
-        else if(data.type == mes_t::GETU){
+        else if(data.mes.type == mes_t::GETU){
             server->db.connection();
             QVector<Client> r = server->db.selectAll();
             server->db.closing();
             QString res;
             for(int i = 0; i < r.size(); ++i)
                 res+= r[i].FIO+ ";";
-            memcpy(data.message, res.toStdString().c_str(), MESSAGE_SIZE);
+            memcpy(data.mes.data, res.toStdString().c_str(), MESSAGE_SIZE);
             memcpy(buffer, &data, sizeof(data));
             if(write(newsockfd, buffer, sizeof(buffer)) < 0){
                 printf("---->Can\'t write, errno = %d\n", errno);
