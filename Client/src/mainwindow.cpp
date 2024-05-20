@@ -108,10 +108,15 @@ void MainWindow::add_mes(QString mes, QString name, bool t = false)
     QLabel* label = new QLabel;
     // QPushButton *button5 = new QPushButton(mes);
     // label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-    label->setText(mes);
-    if(!t)
+    QString text;
+    if(!t){
         label->setAlignment(Qt::AlignRight);
-    else
+        text = name + ": " + mes;
+    }
+    else{
         label->setAlignment(Qt::AlignLeft);
+        text = "Me:" + mes; 
+    }
     ui->mes_layout->addWidget(label);
+    label->setText(text);
 }

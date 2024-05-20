@@ -21,8 +21,6 @@
 const int PORT = 52002;
 // const char* SERVER_IP = "192.168.177.117";
 const char* SERVER_IP = "127.0.0.1";
-// char FIO_from[MESSAGE_SIZE] = "A";
-// char FIO_to[MESSAGE_SIZE] = "C";
 
 
 

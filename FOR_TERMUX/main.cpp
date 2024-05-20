@@ -9,12 +9,15 @@
 #include <errno.h>
 #include <unistd.h>
 #include <stdlib.h>
+
+#include "cripto.h"
+
 #define MESSAGE_SIZE 256
 
 const int PORT = 52002;
-const char* SERVER_IP = "127.0.0.1";
-char FIO_from[MESSAGE_SIZE] = "C";
-char FIO_to[MESSAGE_SIZE] = "A";
+const char* SERVER_IP = "192.168.177.89";
+char FIO_from[MESSAGE_SIZE] = "termux";
+char FIO_to[MESSAGE_SIZE] = "Step";
 
 enum class mes_t 
 {
@@ -39,7 +42,7 @@ struct ClientDTO
 
 void receiveMessages(int sockfd) {
     char sendline[MESSAGE_SIZE];
-
+    Encoder enc;
     while(true) {
         memset(sendline, 0, sizeof(sendline));
         ClientDTO data;
@@ -55,22 +58,31 @@ void receiveMessages(int sockfd) {
             break;
         }
         memcpy(&data, buffer, sizeof(data));
-        std::cout << "Received: " << data.message << std::endl;
+        if(data.mes.type == mes_t::POST){
+            uint8_t* g = (uint8_t*)(&data.mes.data);   
+            std::string res = enc.decrypt(g, data.mes.len).c_str();
+            memcpy(data.mes.data, res.c_str(), MESSAGE_SIZE);
+        }
+        std::cout << "Received from '" << data.from << "' : " << data.mes.data << std::endl;
     }
 }
 
 void sendMessages(int sockfd,sockaddr_in servaddr,sockaddr_in servaddr_to) {
-    std::string message;
-
+    std::string msg;
     ClientDTO data;
+    Encoder enc;
 
     while(true) {
-        std::getline(std::cin, message);
+        std::getline(std::cin, msg);
 
-        data.type = mes_t::POST;
+        uint8_t* secret_mes = enc.encrypt(msg);
+        memcpy(data.mes.data, secret_mes, enc.get_len());
+        data.mes.len = enc.get_len();
+
+        data.mes.type = mes_t::POST;
         memcpy(data.from,FIO_from,MESSAGE_SIZE);
         memcpy(data.to,FIO_to,MESSAGE_SIZE);
-        memcpy(data.message, message.c_str(), sizeof(message));
+        
         char buffer[sizeof(data)];
         memcpy(buffer, &data, sizeof(data));
 

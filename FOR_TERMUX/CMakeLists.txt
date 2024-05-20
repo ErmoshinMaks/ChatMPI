@@ -15,6 +15,7 @@ link_directories(${PROJECT_SOURCE_DIR}/lib)
 
 add_executable(${PROJECT_NAME}
   main.cpp
+  cripto.cpp 
 )
 find_library(${PROJECT_NAME} xtea3)
 # target_link_libraries(${PROJECT_NAME} PRIVATE libxtea3)
