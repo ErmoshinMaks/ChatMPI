@@ -4,6 +4,7 @@
 
 #include "threadsqueue.hpp"
 #include "mainwindow.h"
+#include "cripto.h"
 
 #include <iostream>
 #include <thread>
@@ -18,11 +19,11 @@
 #include <stdlib.h>
 
 const int PORT = 52002;
-const char* SERVER_IP = "127.0.0.1";
+const char* SERVER_IP = "192.168.177.117";
 char FIO_from[MESSAGE_SIZE] = "A";
 char FIO_to[MESSAGE_SIZE] = "C";
 
-#include "cripto.h"
+
 
 void receiveMessages(int sockfd, ThreadSafeQueue<ClientDTO>* queue) {
     
@@ -44,6 +45,13 @@ void receiveMessages(int sockfd, ThreadSafeQueue<ClientDTO>* queue) {
             break;
         }
         memcpy(&data, buffer, sizeof(data));
+
+        if(data.mes.type == mes_t::POST){
+            uint8_t* g = (uint8_t*)(&data.mes.data);   
+            std::string res = enc.decrypt(g, data.mes.len).c_str();
+            memcpy(data.mes.data, res.c_str(), MESSAGE_SIZE);
+        }
+
         queue->push(data);
         std::cout << "Received: " << data.mes.data << std::endl;
     }
