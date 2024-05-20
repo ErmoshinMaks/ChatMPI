@@ -23,6 +23,7 @@ add_executable(${PROJECT_NAME}
   src/cripto.cpp
 
   src/mainwindow.ui
+  src/main.qrc
 )
 
 target_compile_definitions(${PROJECT_NAME}

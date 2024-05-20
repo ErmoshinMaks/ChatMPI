@@ -125,32 +125,13 @@ QPushButton#contact_button
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true">background-color: rgb(78, 154, 6);</string>
+             <string notr="true">background: #3f3f60;</string>
             </property>
-            <widget class="QLabel" name="status_label">
-             <property name="geometry">
-              <rect>
-               <x>380</x>
-               <y>0</y>
-               <width>181</width>
-               <height>81</height>
-              </rect>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">color: rgb(238, 238, 236);</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
             <widget class="QComboBox" name="comboBoxClients">
              <property name="geometry">
               <rect>
-               <x>60</x>
-               <y>20</y>
+               <x>20</x>
+               <y>10</y>
                <width>261</width>
                <height>51</height>
               </rect>
@@ -159,7 +140,7 @@ QPushButton#contact_button
               <string notr="true">color: #0f1925;
 font-size: 18px;
 margin-bottom: 10px;
-background-color: #0b5ed7;
+background-color: #FFFFFF;
 height: 30px;</string>
              </property>
             </widget>
@@ -537,8 +518,8 @@ color: white;</string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>599</width>
-                         <height>211</height>
+                         <width>98</width>
+                         <height>40</height>
                         </rect>
                        </property>
                        <property name="maximumSize">
@@ -864,6 +845,16 @@ QPushButton:pressed
  {
         background: #8f8fb3;
 }</string>
+                      </property>
+                      <property name="icon">
+                       <iconset>
+                        <normaloff>../img/arrow.png</normaloff>../img/arrow.png</iconset>
+                      </property>
+                      <property name="iconSize">
+                       <size>
+                        <width>40</width>
+                        <height>40</height>
+                       </size>
                       </property>
                      </widget>
                     </item>
