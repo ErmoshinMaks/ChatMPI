@@ -31,6 +31,7 @@ public:
     void joinThreads();
     void start();
     void reg(QString FIO,QString ip);
+    void broadcast();
 private:
     const int port = 52002;
 };

@@ -348,7 +348,7 @@ font: 8pt;</string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>98</width>
+                         <width>100</width>
                          <height>40</height>
                         </rect>
                        </property>
@@ -518,7 +518,7 @@ color: white;</string>
                         <rect>
                          <x>0</x>
                          <y>0</y>
-                         <width>98</width>
+                         <width>100</width>
                          <height>40</height>
                         </rect>
                        </property>
@@ -847,8 +847,8 @@ QPushButton:pressed
 }</string>
                       </property>
                       <property name="icon">
-                       <iconset>
-                        <normaloff>../img/arrow.png</normaloff>../img/arrow.png</iconset>
+                       <iconset resource="../resouces.qrc">
+                        <normaloff>:/img/arrow.png</normaloff>:/img/arrow.png</iconset>
                       </property>
                       <property name="iconSize">
                        <size>
@@ -1942,6 +1942,8 @@ QPushButton:pressed
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="../resouces.qrc"/>
+ </resources>
  <connections/>
 </ui>

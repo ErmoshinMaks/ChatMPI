@@ -23,24 +23,25 @@ void handleClient(int newsockfd, Server* server, in_addr cli_ip)
         
         if (data.mes.type == mes_t::REGS){
             server->reg(QString(data.from), inet_ntoa(cli_ip));
+            server->broadcast();
             continue;
         }
         else if(data.mes.type == mes_t::GETU){
-            server->db.connection();
-            QVector<Client> r = server->db.selectAll();
-            server->db.closing();
-            QString res;
-            for(int i = 0; i < r.size(); ++i)
-                res+= r[i].FIO+ ";";
-            memcpy(data.mes.data, res.toStdString().c_str(), MESSAGE_SIZE);
-            memcpy(buffer, &data, sizeof(data));
-            if(write(newsockfd, buffer, sizeof(buffer)) < 0){
-                printf("---->Can\'t write, errno = %d\n", errno);
-                close(newsockfd);
-            }            
+            server->broadcast();
+            // server->db.connection();
+            // QVector<Client> r = server->db.selectAll();
+            // server->db.closing();
+            // QString res;
+            // for(int i = 0; i < r.size(); ++i)
+            //     res+= r[i].FIO+ ";";
+            // memcpy(data.mes.data, res.toStdString().c_str(), MESSAGE_SIZE);
+            // memcpy(buffer, &data, sizeof(data));
+            // if(write(newsockfd, buffer, sizeof(buffer)) < 0){
+            //     printf("---->Can\'t write, errno = %d\n", errno);
+            //     close(newsockfd);
+            // }            
             continue;
         }
-
 
         int toFd = newsockfd;
         in_addr toIp;
@@ -69,6 +70,27 @@ void handleClient(int newsockfd, Server* server, in_addr cli_ip)
 }
 
 
+void Server::broadcast()
+{
+    ClientDTO data;
+    data.mes.type = mes_t::GETU;
+    char buffer[sizeof(ClientDTO)];
+    db.connection();
+    QVector<Client> r = db.selectAll();
+    db.closing();
+    QString res;
+    for(int i = 0; i < r.size(); ++i)
+        res+= r[i].FIO+ ";";
+    
+    for(int i = 0; i < sockets.size(); ++i){
+        memcpy(data.mes.data, res.toStdString().c_str(), MESSAGE_SIZE);
+        memcpy(buffer, &data, sizeof(data));
+        if(write(sockets[i].second, buffer, sizeof(buffer)) < 0){
+            printf("Can\'t write, errno = %d\n", errno);
+            close(sockets[i].second);
+        }   
+    }         
+}
 
 void Server::createSocket()
 {

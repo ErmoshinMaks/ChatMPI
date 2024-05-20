@@ -76,7 +76,7 @@ void MainWindow::check_mes()
             QString line(data.mes.data);
             QStringList list = line.split(';').filter(QString(""));
             list.removeLast();
-            list.filter(username);
+            list.removeOne(username);
             ui->comboBoxClients->clear();
             ui->comboBoxClients->addItems(list);
             break;

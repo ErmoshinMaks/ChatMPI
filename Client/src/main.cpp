@@ -146,17 +146,5 @@ int main(int argc, char *argv[])
     gui.join();
     
     close(sockfd);
-
-
-    
-    // ClientDTO data;
-    // memcpy(data.message, "1sfhjhjdcbhjdsbhj!!!!!!", MESSAGE_SIZE);
-    // std::string a = data.message;
-    
-    // uint8_t* k = enc.encrypt(a);
-    // memcpy(data.message, k, enc.get_len());
-
-    // uint8_t* g = (uint8_t*)(&data.message);   
-    // qDebug() << enc.decrypt(g, 40).c_str();
     return 0;
 }
