@@ -109,7 +109,7 @@ void MainWindow::add_mes(QString mes, QString name, bool t = false)
     // QPushButton *button5 = new QPushButton(mes);
     // label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
     // QString text;
-    if(!t){
+    if(t){
         label->setAlignment(Qt::AlignRight);
         // text = name + ": " + mes;
     }
